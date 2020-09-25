@@ -22,7 +22,7 @@ public class CategoryManager {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(mContext);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        HashSet itemsHashSet = new HashSet(Arrays.asList(category.getItems()));
+        HashSet itemsHashSet = new HashSet(category.getItems());
 
         editor.putStringSet(category.getName(), itemsHashSet)
                 .apply();

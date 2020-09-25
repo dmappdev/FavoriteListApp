@@ -1,6 +1,7 @@
 package com.dmappdev.favoritelistapp;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
 import android.view.Menu;
@@ -8,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,13 +20,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements CategoryRecyclerAdapter.CategoryClickedInterface {
 
     private RecyclerView categoryRecyclerView;
     private FloatingActionButton fab;
     private CategoryManager mCategoryManager = new CategoryManager(this);
-
+    public static final String CATEGORY_OBJECT_KEY = "CATEGORY_KEY";
+    public static final int MAIN_ACTIVITY_REQUEST_CODE = 1;
     @Override
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -43,18 +47,19 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<Category> categories = mCategoryManager.getCategories();
 
         categoryRecyclerView = findViewById(R.id.category_recycler_view);
-        categoryRecyclerView.setAdapter(new CategoryRecyclerAdapter(categories));
+        categoryRecyclerView.setAdapter(new CategoryRecyclerAdapter(categories, this));
         categoryRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
     }
 
-    private void displayCreateCategoryDialog(){
+    private void displayCreateCategoryDialog() {
         String alertTitle = getString(R.string.create_category);
         String positiveButtonTitle = getString(R.string.positive_button_title);
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         final EditText categoryEditText = new EditText(this);
         categoryEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+
         builder.setTitle(alertTitle);
         builder.setView(categoryEditText);
 
@@ -66,9 +71,10 @@ public class MainActivity extends AppCompatActivity {
                         new ArrayList<String>());
                 mCategoryManager.saveCategory(category);
 
-                CategoryRecyclerAdapter categoryRecyclerAdapter =(CategoryRecyclerAdapter) categoryRecyclerView.getAdapter();
+                CategoryRecyclerAdapter categoryRecyclerAdapter = (CategoryRecyclerAdapter) categoryRecyclerView.getAdapter();
                 categoryRecyclerAdapter.addCategory(category);
                 dialogInterface.dismiss();
+                displayCategoryItems(category);
             }
         });
         builder.create().show();
@@ -96,5 +102,39 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void displayCategoryItems(Category category) {
+        Intent categoryIntent = new Intent(MainActivity.this, CategoryItemsActivity.class);
+//        categoryIntent.putExtra()
+        categoryIntent.putExtra(CATEGORY_OBJECT_KEY, category);
+//        startActivity(categoryIntent);
+
+        startActivityForResult(categoryIntent, MAIN_ACTIVITY_REQUEST_CODE);
+    }
+
+//    CategoryRecyclerAdapter.CategoryClickedInterface method
+
+    @Override
+    public void categoryClick(Category category) {
+        displayCategoryItems(category);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == MAIN_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK){
+            if (data != null){
+                mCategoryManager.saveCategory((Category) data.getSerializableExtra(CATEGORY_OBJECT_KEY));
+                updateCategories();
+            }
+        }
+    }
+
+    private void updateCategories() {
+
+        ArrayList<Category> categories = mCategoryManager.getCategories();
+        categoryRecyclerView.setAdapter(new CategoryRecyclerAdapter(categories, this));
+
     }
 }

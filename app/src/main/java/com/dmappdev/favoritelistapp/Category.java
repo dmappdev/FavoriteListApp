@@ -1,8 +1,9 @@
 package com.dmappdev.favoritelistapp;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Category {
+public class Category implements Serializable {
 
     private String name;
     private ArrayList<String> items = new ArrayList<>();
@@ -11,6 +12,7 @@ public class Category {
         this.name = name;
         this.items = items;
     }
+
 
     public String getName() {
         return name;
