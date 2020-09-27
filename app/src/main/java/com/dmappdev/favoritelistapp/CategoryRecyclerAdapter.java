@@ -19,6 +19,7 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryViewHo
 
     private ArrayList<Category> categories;
     private CategoryClickedInterface categoryClickedInterface;
+
     public CategoryRecyclerAdapter(ArrayList<Category> categories, CategoryClickedInterface categoryClickedInterface) {
         this.categories = categories;
         this.categoryClickedInterface = categoryClickedInterface;

@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements CategoryRecyclerA
     private RecyclerView categoryRecyclerView;
     private FloatingActionButton fab;
     private CategoryManager mCategoryManager = new CategoryManager(this);
+
     public static final String CATEGORY_OBJECT_KEY = "CATEGORY_KEY";
     public static final int MAIN_ACTIVITY_REQUEST_CODE = 1;
     @Override
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements CategoryRecyclerA
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -106,10 +108,8 @@ public class MainActivity extends AppCompatActivity implements CategoryRecyclerA
 
     private void displayCategoryItems(Category category) {
         Intent categoryIntent = new Intent(MainActivity.this, CategoryItemsActivity.class);
-//        categoryIntent.putExtra()
-        categoryIntent.putExtra(CATEGORY_OBJECT_KEY, category);
-//        startActivity(categoryIntent);
 
+        categoryIntent.putExtra(CATEGORY_OBJECT_KEY, category);
         startActivityForResult(categoryIntent, MAIN_ACTIVITY_REQUEST_CODE);
     }
 
